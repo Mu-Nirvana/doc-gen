@@ -1,0 +1,9 @@
+Bucnh o text here
+
+<DOC> got me some doc </DOC>
+
+<DOC>
+ONe that spans muliple lines too
+that's pretty cool
+innit?
+</DOC>
