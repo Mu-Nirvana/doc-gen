@@ -1,1 +1,1 @@
-__all__ = ['tags']
+__all__ = ['tags', 'outputs']

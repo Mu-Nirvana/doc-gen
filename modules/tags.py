@@ -11,13 +11,17 @@ class Tag():
     self.tags = tags
 
   def print(self):
-    print(f'Tags in file: {self.path.as_posix()}')
-    seperator = '-----------------'
-    print(seperator)
-    for tag in self.tags: print(tag + '\n' + seperator)
+    output = ''
+    output += f'Tags in file: {self.path.as_posix()}\n'
+    output += '-----------------\n'
+    for tag in self.tags: output += (tag + '\n-----------------\n')
+    return output
+
+  def get_file(self):
+    return self.path.as_posix()
 
 
-class TagParser():
+class TagLocator():
   def __init__(self, directory: Path, ignore: list[str] = DEFAULT_IGNORE, file_types: list[str] = DEFAULT_FILE_TYPES):
     self.directory = directory
     self.ignore = ignore
@@ -61,12 +65,11 @@ class TagParser():
 
     return matches
 
-  # Remove the tags and leading/trailing whitespace from the tagged documentation
-  def clean_tags(self, tags):
+  # Remove the tags from the tagged documentation
+  def rm_tags(self, tags):
     for i, tag in enumerate(tags):
       tag = tag.replace(f'<{DOC_TAG}>', '')
       tag = tag.replace(f'</{DOC_TAG}>', '')
-      tag = tag.strip()
       
       tags[i] = tag
 
@@ -77,8 +80,24 @@ class TagParser():
     tags: list[Tag] = []
     
     for file in documentable_files:
-      doc_tags = self.clean_tags(self.search_file_for_tags(file))
+      doc_tags = self.rm_tags(self.search_file_for_tags(file))
       if doc_tags:
         tags.append(Tag(file, doc_tags))
 
     return tags
+
+def clean_tag_bodies(tag: Tag):
+  # Remove leading/trailing whitespace
+  for i, tag_body in enumerate(tag.tags):
+    tag_body = tag_body.strip()
+
+    # Remove any leading comment symbols and spaces from each line
+    lines = tag_body.splitlines()
+    for j, line in enumerate(lines):
+      line = line.lstrip('# ')
+      lines[j] = line
+  
+    # Recombine lines and remove any trailing newlines
+    tag.tags[i] = '\n'.join(lines).rstrip('\n')
+
+  return tag
