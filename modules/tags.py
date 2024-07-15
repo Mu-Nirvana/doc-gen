@@ -1,10 +1,18 @@
 import re
 from pathlib import Path
 
+# <DOC> The tag locator has the following defaults:
+# - DOC_TAG = 'DOC'
+# - DEFAULT_IGNORE = []
+# - DEFAULT_FILE_TYPES = ['*']
+# </DOC>
 DOC_TAG = 'DOC'
 DEFAULT_IGNORE: list[str] = []
 DEFAULT_FILE_TYPES: list[str] = ['*']
 
+# <DOC> The Tag object is constructed with a Path object for the file the tags orignated from and a list of strings for the tag contents
+# The Tag object has a print() method that returns a plain text formatted representation of the tag contents
+# The get_file() method returns the full file path as a string </DOC>
 class Tag():
   def __init__(self, path: Path, tags: list[str]):
     self.path = path
@@ -21,6 +29,8 @@ class Tag():
     return self.path.as_posix()
 
 
+# <DOC> The TagLocator class takes a Path object for the directory and optionally a list of path regex patterns to ignore and a list of file extensions to search
+# The locate_tags() method recursively searches the directory for tagged documentation and returns a list of Tag objects </DOC>
 class TagLocator():
   def __init__(self, directory: Path, ignore: list[str] = DEFAULT_IGNORE, file_types: list[str] = DEFAULT_FILE_TYPES):
     self.directory = directory
@@ -86,6 +96,7 @@ class TagLocator():
 
     return tags
 
+# <DOC> The clean_tag_bodies() function takes a Tag object and strips leading and trailing whitespace from the tag bodies as well as removing extra comment symbols from the interior of the tag bodies </DOC>
 def clean_tag_bodies(tag: Tag):
   # Remove leading/trailing whitespace
   for i, tag_body in enumerate(tag.tags):
